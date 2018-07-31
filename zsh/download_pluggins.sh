@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 git clone --depth=1 https://github.com/tarjoilija/zgen.git $HOME/.zgen
 git clone --depth=1 https://github.com/junegunn/fzf.git $HOME/.fzf
 ~/.fzf/install
