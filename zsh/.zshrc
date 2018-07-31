@@ -27,7 +27,7 @@ EOPLUGINS
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh #For fzf 
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 #### Bindkeys for shortcut
 bindkey '^f' forward-word #This makes ctrl and space accept the grayed out suggestion.
@@ -35,3 +35,38 @@ bindkey '^[[[CE' autosuggest-execute
 
 #### Environment variables ####
 EDITOR=vim
+
+#### Define all the aliases here ##### 
+alias zshconfig="vim ~/.zshrc"
+alias nteract="open /Applications/nteract.app"
+alias rm='safe-rm'
+alias speedtest='curl -o /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
+alias mpsyt="~/.local/bin/mpsyt"
+
+#### Appending to path ##### 
+export PATH="/Users/tatsuhiroonodera/anaconda/bin:$PATH"
+export PATH="/Applications/Julia-0.6.app/Contents/Resources/julia/bin:$PATH"
+export PATH="/Users/tatsuhiroonodera/projects/ParameterSweeps:$PATH"
+ 
+#### Useful personal functions should be here #####
+vol()
+{osascript -e "set Volume ""$1" }
+
+#use this function like rsync_mlhpc1 ~/projects/DynamicalCoupling 
+#The ~ MUST be used! if using something from home directory 
+rsync_mlhpc1()
+{
+  copy_dir=$1/
+  rsync -zavh $copy_dir mlhpc1:${copy_dir/~/\/home\/onoderat} ${@:2}
+}
+
+rsync_mlhpc2()
+{
+  copy_dir=$1/
+  rsync -zavh $copy_dir mlhpc2:${copy_dir/~/\/home\/onoderat} ${@:2}
+}
+
+#### Spaceship options 
+SPACESHIP_TIME_SHOW=true
+SPACESHIP_DIR_TRUNC=0
+SPACESHIP_JULIA_SHOW=false
