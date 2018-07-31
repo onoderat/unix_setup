@@ -1,0 +1,48 @@
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH=~/.oh-my-zsh
+
+plugins=(git colored-man-pages)
+
+ZSH_THEME="awesomepanda"
+
+source $ZSH/oh-my-zsh.sh
+
+
+source ~/.oh-my-zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+. ~/z.sh
+
+# Write own aliases here
+alias rm='safe-rm'
+alias watchcpu="watch -n 0.1 bash showperusercpu.sh"
+
+# Write own functions here
+user_cpu (){
+    top -b -n 1 -u $1 | awk 'NR>7 { sum += $9; } END { print sum; }'
+}
+
+export PATH="/home/onoderat/projects/ParameterSweeps:$PATH"
+
+# if the command-not-found package is installed, use it
+if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-not-found ]; then
+    function command_not_found_handle {
+	# check because c-n-f could've been removed in the meantime
+	if [ -x /usr/lib/command-not-found ]; then
+	    /usr/lib/command-not-found -- "$1"
+	    return $?
+	elif [ -x /usr/share/command-not-found/command-not-found ]; then
+	    /usr/share/command-not-found/command-not-found -- "$1"
+	    return $?
+	else
+	    printf "%s: command not found\n" "$1" >&2
+	    return 127
+	fi
+    }
+fi
+
+export PATH=$HOME/.conda/envs/hiro/bin:$PATH
+export CONDA_PREFIX=$HOME/.conda/envs/hiro
+export CONDA_DEFAULT_ENV=hiro
+
