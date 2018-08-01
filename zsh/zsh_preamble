@@ -1,6 +1,6 @@
 export ZSH=/home/onoderat/.oh-my-zsh
 
-ZSH_THEME="cloud" #other good options are avit, pure
+ZSH_THEME="cloud" #other good options are pure, default - add an if else so I do not have to edit this...
 
 source "${HOME}/.zgen/zgen.zsh"
 
