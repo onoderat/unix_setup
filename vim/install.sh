@@ -1,3 +1,4 @@
+#!/bin/bash
 mkdir -p ~/.vim/pack/tpope/start
 cd ~/.vim/pack/tpope/start
 git clone https://tpope.io/vim/surround.git
