@@ -1,12 +1,92 @@
 syntax on
 set hls
 set number
-set wildmenu
-set wildmode=full
-set backspace=indent,eol,start
+set mouse=a
+set wildmode=longest,list
 set history=200
 set timeoutlen=1000 ttimeoutlen=0
 
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+" Toggle folds with <Space>
+nnoremap <expr> <Space> foldlevel('.') ? 'za' : '\<Space>'
+highlight Folded ctermbg=White ctermfg=Red
+augroup rc_fold
+    autocmd! FileType julia setlocal foldmethod=syntax foldnestmax=2
+augroup END
+
+set nocompatible
+let g:mapleader = ','  " Set <Leader>
+
+"### Buffer management
+:nnoremap <right> :bnext<CR>
+:nnoremap <left> :bprevious<CR>
+
+" ### Hack to open vimrc fast
+:nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+
+" ### Word wrapping
+:set tw=79
+filetype plugin indent on
+" show existing tab with 4 spaces width
+set tabstop=4
+" when indenting with '>', use 4 spaces width
+set shiftwidth=4
+" On pressing tab, insert 4 spaces
+set expandtab
+
+" ### cursor shape 
+"let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+"let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+"let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+call plug#begin('~/.vim/plugged')
+
+" vim-airline {{{2
+Plug 'tpope/vim-sensible'
+
+Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+    let g:airline#extensions#tabline#enabled = 1
+
+Plug 'wincent/command-t'
+
+Plug 'tpope/vim-commentary'
+
+Plug 'justinmk/vim-dirvish'              " browse directories and files
+if v:version >= 800
+      Plug 'kristijanhusak/vim-dirvish-git'  " annotate dirvish with git status
+endif
+
+Plug 'Konfekt/FastFold'  " speed up folds
+
+" custom text objects {{{3
+Plug 'kana/vim-textobj-user'    " define custom text objects
+Plug 'kana/vim-textobj-entire'  " define text objects for the entire buffer
+
+Plug 'JuliaEditorSupport/julia-vim'
+let g:latex_to_unicode_file_types = ["julia", "json"]
+
+" vim-slime {{{3
+Plug 'jpalardy/vim-slime'  " send text from buffer to terminal process
+let g:slime_no_mappings = 1
+nmap <silent> <Leader>r <Plug>SlimeMotionSend
+nmap <silent> <Leader>rr <Plug>SlimeLineSend
+nmap <silent> <Leader>r<Leader>r <Leader>rr
+xmap <silent> <Leader>r <Plug>SlimeRegionSend
+if &term =~# "tmux" || &term =~# "screen"
+  let g:slime_target = "tmux"
+  let g:slime_default_config = {
+        \ "socket_name": split($TMUX, ",")[0],
+        \ "target_pane": ":.1"
+        \ }
+else
+  let g:slime_target = "vimterminal"
+  let g:slime_vimterminal_config = {"term_finish": "close"}
+endif
+let g:slime_paste_file = tempname()
+let g:slime_python_ipython = 1
+
+call plug#end()
+
+" ### Keymaps ###
+:map j gj
+:map k gk
+
