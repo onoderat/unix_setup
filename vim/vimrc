@@ -1,29 +1,46 @@
+" vim: foldmethod=marker
+" Keymaps {{{1
+nnoremap <expr> <Space> foldlevel('.') ? 'za' : '\<Space>'
+highlight Folded ctermbg=Gray ctermfg=Black
+
+set hlsearch
+hi Search ctermbg=Gray
+hi Search ctermfg=Black
+
+set nocompatible
+let g:mapleader = ','  " set <leader>
+set hidden
+
+" Fundamental configurations {{{1
+" Super defaults {{{2
 syntax on
+set wildmode=longest,list
 set hls
 set number
 set mouse=a
-set wildmode=longest,list
 set history=200
 set timeoutlen=1000 ttimeoutlen=0
 
-" Toggle folds with <Space>
-nnoremap <expr> <Space> foldlevel('.') ? 'za' : '\<Space>'
-highlight Folded ctermbg=White ctermfg=Red
-augroup rc_fold
-    autocmd! FileType julia setlocal foldmethod=syntax foldnestmax=2
-augroup END
+" Loading vimrc {{{2
+" Hit <Leader>, to Drop $MYVIMRC, and <Leader>. to source it and reload current buffer
+nmap <silent> <Leader>, :e $MYVIMRC<CR>
+if !exists('*<SID>LoadRc')
+  function! <SID>LoadRc()
+    source $MYVIMRC
+    if has('gui_running') && filereadable($MYGVIMRC)
+       source $MYGVIMRC
+    endif
+    silent! edit
+  endfunction
+endif
+nmap <silent> <Leader>. :call <SID>LoadRc()<CR>
 
-set nocompatible
-let g:mapleader = ','  " Set <Leader>
-
-"### Buffer management
+"map <C-n> :NERDTreeToggle<CR>
+" Buffer management {{{3
 :nnoremap <right> :bnext<CR>
 :nnoremap <left> :bprevious<CR>
 
-" ### Hack to open vimrc fast
-:nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-
-" ### Word wrapping
+" Word wrapping {{{2
 :set tw=79
 filetype plugin indent on
 " show existing tab with 4 spaces width
@@ -33,34 +50,40 @@ set shiftwidth=4
 " On pressing tab, insert 4 spaces
 set expandtab
 
-" ### cursor shape 
+" Cursor shape  {{{2
 "let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 "let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 "let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-
+" Plugging configuration {{{1
 call plug#begin('~/.vim/plugged')
+" tpope good stuff {{{2
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-unimpaired' 
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-fugitive'
 
 " vim-airline {{{2
-Plug 'tpope/vim-sensible'
+" Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+"     let g:airline#extensions#tabline#enabled = 1
 
-Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-    let g:airline#extensions#tabline#enabled = 1
-
-Plug 'wincent/command-t'
-
-Plug 'tpope/vim-commentary'
-
+" fzf {{{2
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+" dirvish {{{2
 Plug 'justinmk/vim-dirvish'              " browse directories and files
 if v:version >= 800
-      Plug 'kristijanhusak/vim-dirvish-git'  " annotate dirvish with git status
+  Plug 'kristijanhusak/vim-dirvish-git'  " annotate dirvish with git status
 endif
-
+" fastfold {{{2
 Plug 'Konfekt/FastFold'  " speed up folds
 
-" custom text objects {{{3
+" custom text objects {{{2
 Plug 'kana/vim-textobj-user'    " define custom text objects
 Plug 'kana/vim-textobj-entire'  " define text objects for the entire buffer
 
+" julia {{{2
 Plug 'JuliaEditorSupport/julia-vim'
 let g:latex_to_unicode_file_types = ["julia", "json"]
 
@@ -84,9 +107,45 @@ endif
 let g:slime_paste_file = tempname()
 let g:slime_python_ipython = 1
 
+" latex {{{3
+Plug 'lervag/vimtex'  " complete, compile, view output, parse errors
+let g:vimtex_view_automatic = 0
+let g:vimtex_view_method = 'skim'
+let g:vimtex_fold_enabled = 1
+let g:vimtex_complete_enabled = 1
+let g:vimtex_complete_close_braces = 0
+" YouCompleteMe {{{2
+" Plug 'Valloric/YouCompleteMe'
+" Ale {{{2
+Plug 'w0rp/ale'
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_info_str = 'I'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '%linter% %severity%: %s (%code%)'
+
+" Configure LSP for supported filetypes
+let g:ale_completion_enabled = 1
+let g:ale_lsp_filetypes = ['julia']
+let s:ale_lsp_filetype_pattern = join(g:ale_lsp_filetypes, ",")
+augroup GoTo
+execute "autocmd! FileType" s:ale_lsp_filetype_pattern
+      \ "noremap <silent> <buffer> <C-]> <Plug>(ale_go_to_definition)"
+augroup END
+augroup GetDoc
+execute "autocmd! FileType" s:ale_lsp_filetype_pattern
+      \ "noremap <silent> <buffer> K <Plug>(ale_hover)"
+augroup END
+unlet s:ale_lsp_filetype_pattern
+
+" textobj-line 
+Plug 'kana/vim-textobj-line' 
+
 call plug#end()
 
-" ### Keymaps ###
-:map j gj
-:map k gk
-
+"
+" Folding configuration {{{1
+augroup rc_fold
+  autocmd! FileType c,cpp,cuda,objc,objcpp,cs,go,java,javascript,rust,typescript
+        \ setlocal foldmethod=syntax foldnestmax=2
+  autocmd! FileType julia setlocal foldmethod=syntax foldnestmax=2
+augroup END
