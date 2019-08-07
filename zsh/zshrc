@@ -14,16 +14,17 @@ if ! zgen saved; then
     zgen load denysdovhan/spaceship-prompt spaceship
     zgen load zsh-users/zsh-syntax-highlighting
 
-    # bulk load
-    zgen loadall <<EOPLUGINS
-        zsh-users/zsh-history-substring-search
-        /path/to/local/plugin
-EOPLUGINS
-    # completions
-    zgen load zsh-users/zsh-completions src
+    # zgen safe
+    # # bulk load
+    # zgen loadall <<EOPLUGINS
+    #     zsh-users/zsh-history-substring-search
+    #     /path/to/local/plugin
+# EOPLUGINS
+    # # completions
+    # zgen load zsh-users/zsh-completions src
 
-    # save all to init script
-    rm ${ZGEN_INIT}/init.zsh && zgen save
+    # # save all to init script
+    # rm ${ZGEN_INIT}/init.zsh && zgen save
 
 fi
 
@@ -43,13 +44,15 @@ alias nteract="open /Applications/nteract.app"
 alias rm='safe-rm'
 alias speedtest='curl -o /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
 alias mpsyt="~/.local/bin/mpsyt"
-alias julia1=/usr/local/bin/julia
+alias preview=" open -a Preview"
 
 #### Appending to path ##### 
-export PATH="/Users/tatsuhiroonodera/anaconda/bin:$PATH"
+export PATH="/anaconda3/bin:$PATH"
 export PATH="/Applications/Julia-0.6.app/Contents/Resources/julia/bin:$PATH"
 export PATH="/Users/tatsuhiroonodera/projects/ParameterSweeps:$PATH"
- 
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+export PATH=~/build:$PATH
+
 #### Useful personal functions should be here #####
 vol()
 {osascript -e "set Volume ""$1" }
